@@ -107,19 +107,30 @@ def get_hash(msg):
 
 
 def create_digital_signature(m_code, key):
-    return pow(m_code, key.d) % key.r
+    return pow(m_code, key.d, key.r)
 
 
 def reverse_digital_signature(s_code, key):
-    return pow(s_code, key.e) % key.r
+    return pow(s_code, key.e, key.r)
 
 
 # MAIN
-message = input("Enter the message")
+# POST
+message = input("Enter the message\n")
+print("Creating keys")
 public_key, private_key = create_key_pair(message)
+print("Create hash for sender")
 m = get_hash(message)
 s = create_digital_signature(m, private_key)
 
-m2 = reverse_digital_signature(s, public_key)
-m_extra_hash = get_hash(message)
-print(m2 == m_extra_hash)
+# GET
+message_received = input("Enter the received message\n")
+m_rec = reverse_digital_signature(s, public_key)
+print("Create hash for receiver")
+hash_rec = get_hash(message_received)
+if m_rec == hash_rec:
+    print("OK")
+else:
+    print("Wrong Message")
+
+# BSUIR 23 17 31 41 BSUIR 31 41
