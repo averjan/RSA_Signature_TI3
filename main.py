@@ -101,7 +101,7 @@ def get_hash(msg):
     p, q = get_pq()
     n = p * q
     for c in msg:
-        h = pow(h + ord(c) - alphabet_start, 2) % n
+        h = pow(h + ord(c) - alphabet_start, 2, n)
 
     return h
 
@@ -117,10 +117,16 @@ def reverse_digital_signature(s_code, key):
 # MAIN
 # POST
 message = input("Enter the message\n")
-print("Creating keys")
-public_key, private_key = create_key_pair(message)
 print("Create hash for sender")
 m = get_hash(message)
+print("Creating keys")
+public_key, private_key = create_key_pair(message)
+
+# Make sure that 'r' value is large enough to compute 's' value
+while private_key.r < m:
+    print("p and q for a key are too small!")
+    public_key, private_key = create_key_pair(message)
+
 s = create_digital_signature(m, private_key)
 
 # GET
